@@ -162,6 +162,8 @@ jobs:
     - script: >
         folder('CICD-multi-branch/build')
     - script: >
+        folder('CICD-multi-branch/deploy/cms')
+    - script: >
         folder('CICD-multi-branch/deploy/cms/Development')
     - script: >
         folder('CICD-multi-branch/deploy/cms/Alpha')
@@ -170,6 +172,8 @@ jobs:
     - script: >
         folder('CICD-multi-branch/deploy/cms/Prod')
 
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou')
     - script: >
         folder('CICD-multi-branch/deploy/trueyou/Development')
     - script: >
@@ -180,6 +184,8 @@ jobs:
         folder('CICD-multi-branch/deploy/trueyou/Prod')
 
     - script: >
+        folder('CICD-multi-branch/deploy/trueid')
+    - script: >
         folder('CICD-multi-branch/deploy/trueid/Development')
     - script: >
         folder('CICD-multi-branch/deploy/trueid/Alpha')
@@ -188,6 +194,8 @@ jobs:
     - script: >
         folder('CICD-multi-branch/deploy/trueid/Prod')
 
+    - script: >
+        folder('CICD-multi-branch/deploy/devops')
     - script: >
         folder('CICD-multi-branch/deploy/devops/Development')
     - script: >
