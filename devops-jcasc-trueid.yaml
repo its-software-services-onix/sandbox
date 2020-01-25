@@ -1,0 +1,5741 @@
+jenkins:
+  systemMessage: "DEVOPS Jenkins CICD"
+  scmCheckoutRetryCount: 2
+
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: SYS_CLUSTER_NAME
+            value: ${SYS_CLUSTER_NAME}
+
+          - key: SYS_FROM_JCASC
+            value: 'Y'
+
+          - key: SYS_PACKAGE_VERSION
+            value: ${SYS_PACKAGE_VERSION}
+
+          - key: SYS_JOB_BASE_DIR
+            value: 'CICD-multi-branch'            
+            
+          - key: SYS_JENKINS_ENABLED
+            value: 'N'
+            #To prevent builds storm we will intially this flag to be 'N'. We will need to manuall change it to 'Y' after Jenkins started. 
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: ${JENKINS_USER}
+          password: ${JENKINS_PASSWORD}
+
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+        - "Overall/Read:authenticated"
+        - "Overall/Administer:authenticated"
+        - "Job/Read:authenticated"
+        - "Agent/Build:anonymous"
+
+  nodes:      
+    - permanent:
+        labelString: "GCP multi-branch-slave-01"
+        mode: NORMAL
+        name: "GCP-SLAVE-01"
+        numExecutors: 7
+        remoteFS: "/home/jenkins"
+        launcher:
+          ssh:
+            host: "${JENKINS_GCP_SLAVE_01_IP}"
+            port: 22
+            credentialsId: 'SSHPrivateKeyID'
+            launchTimeoutSeconds: 60
+            maxNumRetries: 3
+            retryWaitTime: 30
+            sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+
+    - permanent:
+        labelString: "GCP multi-branch-slave-01"
+        mode: NORMAL
+        name: "GCP-SLAVE-02"
+        numExecutors: 7
+        remoteFS: "/home/jenkins"
+        launcher:
+          ssh:
+            host: "${JENKINS_GCP_SLAVE_02_IP}"
+            port: 22
+            credentialsId: 'SSHPrivateKeyID'
+            launchTimeoutSeconds: 60
+            maxNumRetries: 3
+            retryWaitTime: 30
+            sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+              
+    - permanent:
+        labelString: "P2 multi-branch-slave-01"
+        mode: NORMAL
+        name: "P2-SLAVE-01"
+        numExecutors: 7
+        remoteFS: "/home/jenkins"
+        launcher:
+          jnlp:
+            workDirSettings:
+              disabled: true
+              failIfWorkDirIsMissing: false
+              internalDir: "remoting"
+              workDirPath: ""
+
+unclassified:
+  globalLibraries:
+    libraries:
+      - name: "pipeline-libraries"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://bitbucket.org/truedmp/pipeline-libraries.git"
+                credentialsId: "DevopsBitBucketID"
+
+  location:
+    adminAddress: seubpong.mon@truedigital.com
+    url: ${JENKINS_URL)
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'DevopsBitBucketID'
+              username: ${BITBUCKET_USER}
+              password: ${BITBUCKET_PASSWORD}
+
+          - string:
+              scope: GLOBAL
+              id: "LineNotifyToken"
+              secret: ${LINE_NOTIFY_TOKEN}
+              description: "Line notification token" 
+              
+          - file:
+              scope: GLOBAL
+              id: "GCP-SERVICE-ACCOUNT-FOR-CICD"
+              fileName: "gcp-service-account.json"
+              secretBytes: ${GCP_KEY_FILE_BYTES} # GCP_KEY_FILE_BYTES="$(cat mysecretfile.txt | base64)"
+
+          - basicSSHUserPrivateKey:
+              id: 'SSHPrivateKeyID'
+              scope: GLOBAL
+              description: 'Master connect to slave private key'
+              username: 'jenkins'
+              privateKeySource:
+                directEntry:
+                  privateKey: ${SSH_PRIVATE_KEY}
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'VeracodeID'
+              username: ${VERACODE_USER}
+              password: ${VERACODE_SECRET_KEY}
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'TrueIDCredentialDAST'
+              username: ${DAST_TRUEID_USER}
+              password: ${DAST_TRUEID_PASSWORD}
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'TrueYouCredentialDAST'
+              username: ${DAST_TRUEYOU_USER}
+              password: ${DAST_TRUEYOU_PASSWORD}
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'CmsCredentialDAST'
+              username: ${DAST_CMS_USER}
+              password: ${DAST_CMS_PASSWORD}
+
+jobs:
+
+    - script: >
+        folder('CICD-multi-branch')
+    - script: >
+        folder('CICD-multi-branch/deploy')
+    - script: >
+        folder('CICD-multi-branch/build')
+    - script: >
+        folder('CICD-multi-branch/deploy/cms')
+    - script: >
+        folder('CICD-multi-branch/deploy/cms/Development')
+    - script: >
+        folder('CICD-multi-branch/deploy/cms/Alpha')
+    - script: >
+        folder('CICD-multi-branch/deploy/cms/PreProd')
+    - script: >
+        folder('CICD-multi-branch/deploy/cms/Prod')
+
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou/Development')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou/Alpha')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou/PreProd')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueyou/Prod')
+
+    - script: >
+        folder('CICD-multi-branch/deploy/trueid')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueid/Development')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueid/Alpha')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueid/PreProd')
+    - script: >
+        folder('CICD-multi-branch/deploy/trueid/Prod')
+
+    - script: >
+        folder('CICD-multi-branch/deploy/devops')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Development')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Alpha')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/PreProd')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Prod')
+
+    - script: >
+        folder('CICD-multi-branch/build/cms')
+    - script: >
+        folder('CICD-multi-branch/build/trueyou')
+    - script: >
+        folder('CICD-multi-branch/build/trueid')
+    - script: >
+        folder('CICD-multi-branch/build/devops')
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Development/cms-v1-bn-contentdetail')
+        {
+            description 'Deployment job for cms-v1-bn-contentdetail'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-contentdetail')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Development/cms-v1-bn-generateid')
+        {
+            description 'Deployment job for cms-v1-bn-generateid'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-generateid')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Development/cms-v1-language')
+        {
+            description 'Deployment job for cms-v1-language'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-language')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Alpha/cms-v1-bn-contentdetail')
+        {
+            description 'Deployment job for cms-v1-bn-contentdetail'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-contentdetail')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Alpha/cms-v1-bn-generateid')
+        {
+            description 'Deployment job for cms-v1-bn-generateid'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-generateid')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Alpha/cms-v1-language')
+        {
+            description 'Deployment job for cms-v1-language'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-language')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/PreProd/cms-v1-bn-contentdetail')
+        {
+            description 'Deployment job for cms-v1-bn-contentdetail'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-contentdetail')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/PreProd/cms-v1-bn-generateid')
+        {
+            description 'Deployment job for cms-v1-bn-generateid'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-generateid')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/PreProd/cms-v1-language')
+        {
+            description 'Deployment job for cms-v1-language'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-language')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Prod/cms-v1-bn-contentdetail')
+        {
+            description 'Deployment job for cms-v1-bn-contentdetail'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-contentdetail')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Prod/cms-v1-bn-generateid')
+        {
+            description 'Deployment job for cms-v1-bn-generateid'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-bn-generateid')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/cms/Prod/cms-v1-language')
+        {
+            description 'Deployment job for cms-v1-language'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'cms-v1-language')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueyou/Development/p2.trueyou.co.th')
+        {
+            description 'Deployment job for p2.trueyou.co.th'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.trueyou.co.th')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueyou/Alpha/p2.trueyou.co.th')
+        {
+            description 'Deployment job for p2.trueyou.co.th'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.trueyou.co.th')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueyou/PreProd/p2.trueyou.co.th')
+        {
+            description 'Deployment job for p2.trueyou.co.th'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.trueyou.co.th')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueyou/Prod/p2.trueyou.co.th')
+        {
+            description 'Deployment job for p2.trueyou.co.th'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.trueyou.co.th')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/p2.sport.trueid.net')
+        {
+            description 'Deployment job for p2.sport.trueid.net'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.sport.trueid.net')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-movie-webfn')
+        {
+            description 'Deployment job for trueid-movie-webfn'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-movie-webfn')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-player-embed')
+        {
+            description 'Deployment job for trueid-player-embed'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-player-embed')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-clip-p2')
+        {
+            description 'Deployment job for trueid-web-clip-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-clip-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-dara-p2')
+        {
+            description 'Deployment job for trueid-web-dara-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dara-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-dharma')
+        {
+            description 'Deployment job for trueid-web-dharma'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dharma')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-exclusive-p2')
+        {
+            description 'Deployment job for trueid-web-exclusive-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-exclusive-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-game')
+        {
+            description 'Deployment job for trueid-web-game'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-game')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-home-p2')
+        {
+            description 'Deployment job for trueid-web-home-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-home-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-horoscope')
+        {
+            description 'Deployment job for trueid-web-horoscope'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-horoscope')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-music-p2')
+        {
+            description 'Deployment job for trueid-web-music-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-music-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-payment')
+        {
+            description 'Deployment job for trueid-web-payment'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-payment-p2')
+        {
+            description 'Deployment job for trueid-web-payment-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-trueidtv')
+        {
+            description 'Deployment job for trueid-web-trueidtv'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-trueidtv')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-tv-p2')
+        {
+            description 'Deployment job for trueid-web-tv-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-tv-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-widget')
+        {
+            description 'Deployment job for trueid-web-widget'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-widget')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-women-p2')
+        {
+            description 'Deployment job for trueid-web-women-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-women-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Development/trueid-web-travel-p2')
+        {
+            description 'Deployment job for trueid-web-travel-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-travel-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/p2.sport.trueid.net')
+        {
+            description 'Deployment job for p2.sport.trueid.net'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.sport.trueid.net')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-movie-webfn')
+        {
+            description 'Deployment job for trueid-movie-webfn'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-movie-webfn')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-player-embed')
+        {
+            description 'Deployment job for trueid-player-embed'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-player-embed')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-clip-p2')
+        {
+            description 'Deployment job for trueid-web-clip-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-clip-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-dara-p2')
+        {
+            description 'Deployment job for trueid-web-dara-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dara-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-dharma')
+        {
+            description 'Deployment job for trueid-web-dharma'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dharma')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-exclusive-p2')
+        {
+            description 'Deployment job for trueid-web-exclusive-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-exclusive-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-game')
+        {
+            description 'Deployment job for trueid-web-game'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-game')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-home-p2')
+        {
+            description 'Deployment job for trueid-web-home-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-home-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-horoscope')
+        {
+            description 'Deployment job for trueid-web-horoscope'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-horoscope')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-music-p2')
+        {
+            description 'Deployment job for trueid-web-music-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-music-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-payment')
+        {
+            description 'Deployment job for trueid-web-payment'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-payment-p2')
+        {
+            description 'Deployment job for trueid-web-payment-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-trueidtv')
+        {
+            description 'Deployment job for trueid-web-trueidtv'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-trueidtv')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-tv-p2')
+        {
+            description 'Deployment job for trueid-web-tv-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-tv-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-widget')
+        {
+            description 'Deployment job for trueid-web-widget'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-widget')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-women-p2')
+        {
+            description 'Deployment job for trueid-web-women-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-women-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Alpha/trueid-web-travel-p2')
+        {
+            description 'Deployment job for trueid-web-travel-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-travel-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/p2.sport.trueid.net')
+        {
+            description 'Deployment job for p2.sport.trueid.net'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.sport.trueid.net')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-movie-webfn')
+        {
+            description 'Deployment job for trueid-movie-webfn'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-movie-webfn')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-player-embed')
+        {
+            description 'Deployment job for trueid-player-embed'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-player-embed')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-clip-p2')
+        {
+            description 'Deployment job for trueid-web-clip-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-clip-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-dara-p2')
+        {
+            description 'Deployment job for trueid-web-dara-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dara-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-dharma')
+        {
+            description 'Deployment job for trueid-web-dharma'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dharma')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-exclusive-p2')
+        {
+            description 'Deployment job for trueid-web-exclusive-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-exclusive-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-game')
+        {
+            description 'Deployment job for trueid-web-game'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-game')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-home-p2')
+        {
+            description 'Deployment job for trueid-web-home-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-home-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-horoscope')
+        {
+            description 'Deployment job for trueid-web-horoscope'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-horoscope')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-music-p2')
+        {
+            description 'Deployment job for trueid-web-music-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-music-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-payment')
+        {
+            description 'Deployment job for trueid-web-payment'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-payment-p2')
+        {
+            description 'Deployment job for trueid-web-payment-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-trueidtv')
+        {
+            description 'Deployment job for trueid-web-trueidtv'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-trueidtv')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-tv-p2')
+        {
+            description 'Deployment job for trueid-web-tv-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-tv-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-widget')
+        {
+            description 'Deployment job for trueid-web-widget'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-widget')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-women-p2')
+        {
+            description 'Deployment job for trueid-web-women-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-women-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/PreProd/trueid-web-travel-p2')
+        {
+            description 'Deployment job for trueid-web-travel-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-travel-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/p2.sport.trueid.net')
+        {
+            description 'Deployment job for p2.sport.trueid.net'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'p2.sport.trueid.net')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-movie-webfn')
+        {
+            description 'Deployment job for trueid-movie-webfn'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-movie-webfn')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-player-embed')
+        {
+            description 'Deployment job for trueid-player-embed'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-player-embed')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-clip-p2')
+        {
+            description 'Deployment job for trueid-web-clip-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-clip-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-dara-p2')
+        {
+            description 'Deployment job for trueid-web-dara-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dara-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-dharma')
+        {
+            description 'Deployment job for trueid-web-dharma'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-dharma')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-exclusive-p2')
+        {
+            description 'Deployment job for trueid-web-exclusive-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-exclusive-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-game')
+        {
+            description 'Deployment job for trueid-web-game'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-game')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-home-p2')
+        {
+            description 'Deployment job for trueid-web-home-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-home-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-horoscope')
+        {
+            description 'Deployment job for trueid-web-horoscope'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-horoscope')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-music-p2')
+        {
+            description 'Deployment job for trueid-web-music-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-music-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-payment')
+        {
+            description 'Deployment job for trueid-web-payment'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-payment-p2')
+        {
+            description 'Deployment job for trueid-web-payment-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-payment-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-trueidtv')
+        {
+            description 'Deployment job for trueid-web-trueidtv'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-trueidtv')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-tv-p2')
+        {
+            description 'Deployment job for trueid-web-tv-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-tv-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-widget')
+        {
+            description 'Deployment job for trueid-web-widget'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-widget')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-women-p2')
+        {
+            description 'Deployment job for trueid-web-women-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-women-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/trueid/Prod/trueid-web-travel-p2')
+        {
+            description 'Deployment job for trueid-web-travel-p2'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'trueid-web-travel-p2')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/cms/cms-v1-bn-contentdetail')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'cms-v1-bn-contentdetail'
+                            remote('https://bitbucket.org/truedmp/cms-v1-bn-contentdetail.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/cms/cms-v1-bn-generateid')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'cms-v1-bn-generateid'
+                            remote('https://bitbucket.org/truedmp/cms-v1-bn-generateid.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/cms/cms-v1-language')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'cms-v1-language'
+                            remote('https://bitbucket.org/truedmp/cms-v1-language.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueyou/p2.trueyou.co.th')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'p2.trueyou.co.th'
+                            remote('https://bitbucket.org/truedmp/p2.trueyou.co.th.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/p2.sport.trueid.net')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'p2.sport.trueid.net'
+                            remote('https://bitbucket.org/truedmp/p2.sport.trueid.net.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-movie-webfn')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-movie-webfn'
+                            remote('https://bitbucket.org/truedmp/trueid-web-movie.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-player-embed')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-player-embed'
+                            remote('https://bitbucket.org/truedmp/player-embed.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-clip-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-clip-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-clip-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-dara-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-dara-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-dara-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-dharma')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-dharma'
+                            remote('https://bitbucket.org/truedmp/trueid-web-dharma-ff.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-exclusive-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-exclusive-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-exclusive-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-game')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-game'
+                            remote('https://bitbucket.org/truedmp/trueid-web-game.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-home-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-home-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-home-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-horoscope')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-horoscope'
+                            remote('https://bitbucket.org/truedmp/trueid-web-horoscope.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-music-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-music-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-music-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-payment')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-payment'
+                            remote('https://bitbucket.org/truedmp/trueid-web-payment.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-payment-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-payment-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-payment-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-trueidtv')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-trueidtv'
+                            remote('https://bitbucket.org/truedmp/trueid-web-trueidtv.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-tv-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-tv-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-tv-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-widget')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-widget'
+                            remote('https://bitbucket.org/truedmp/trueid-web-widget.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-women-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-women-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-women-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/trueid/trueid-web-travel-p2')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'trueid-web-travel-p2'
+                            remote('https://bitbucket.org/truedmp/trueid-web-travel-p2.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-webapp-demo')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'devops-webapp-demo'
+                            remote('https://bitbucket.org/true_dmp_devops/devops-webapp-demo.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-integration-legacy')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'devops-integration-legacy'
+                            remote('https://bitbucket.org/true_dmp_devops/devops-integration-legacy.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-jenkins-jcasc')
+        {
+            branchSources
+            {
+                branchSource
+                {
+                    source
+                    {
+                        git
+                        {
+                            id = 'devops-jenkins-jcasc'
+                            remote('https://bitbucket.org/true_dmp_devops/devops-jenkins-jcasc.git')
+                            credentialsId('DevopsBitBucketID')
+
+                            traits
+                            {
+                                gitTagDiscovery {}
+                                gitBranchDiscovery {}
+
+                                headWildcardFilter
+                                {
+                                    includes('master develop release* feature* tag-*')
+                                    excludes('')
+                                }
+
+                                buildStrategies
+                                {
+                                    buildTags 
+                                    {
+                                        atLeastDays ''
+                                        atMostDays '1'
+                                    }
+
+                                    buildRegularBranches { }
+                                    skipInitialBuildOnFirstBranchIndexing()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
