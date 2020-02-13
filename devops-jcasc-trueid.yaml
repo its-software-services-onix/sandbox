@@ -4337,41 +4337,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'cms-v1-bn-contentdetail'
-                            remote('https://bitbucket.org/truedmp/cms-v1-bn-contentdetail.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('cms-v1-bn-contentdetail')
+                    remote('https://bitbucket.org/truedmp/cms-v1-bn-contentdetail.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4394,41 +4365,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'cms-v1-bn-generateid'
-                            remote('https://bitbucket.org/truedmp/cms-v1-bn-generateid.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('cms-v1-bn-generateid')
+                    remote('https://bitbucket.org/truedmp/cms-v1-bn-generateid.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4451,41 +4393,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'cms-v1-language'
-                            remote('https://bitbucket.org/truedmp/cms-v1-language.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('cms-v1-language')
+                    remote('https://bitbucket.org/truedmp/cms-v1-language.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4508,41 +4421,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'p2.trueyou.co.th'
-                            remote('https://bitbucket.org/truedmp/p2.trueyou.co.th.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('p2.trueyou.co.th')
+                    remote('https://bitbucket.org/truedmp/p2.trueyou.co.th.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4565,41 +4449,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'p2.sport.trueid.net'
-                            remote('https://bitbucket.org/truedmp/p2.sport.trueid.net.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('p2.sport.trueid.net')
+                    remote('https://bitbucket.org/truedmp/p2.sport.trueid.net.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4622,41 +4477,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-movie-webfn'
-                            remote('https://bitbucket.org/truedmp/trueid-web-movie.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-movie-webfn')
+                    remote('https://bitbucket.org/truedmp/trueid-web-movie.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4679,41 +4505,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-player-embed'
-                            remote('https://bitbucket.org/truedmp/player-embed.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-player-embed')
+                    remote('https://bitbucket.org/truedmp/player-embed.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4736,41 +4533,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-clip-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-clip-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-clip-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-clip-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4793,41 +4561,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-dara-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-dara-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-dara-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-dara-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4850,41 +4589,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-dharma'
-                            remote('https://bitbucket.org/truedmp/trueid-web-dharma-ff.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-dharma')
+                    remote('https://bitbucket.org/truedmp/trueid-web-dharma-ff.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4907,41 +4617,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-exclusive-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-exclusive-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-exclusive-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-exclusive-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -4964,41 +4645,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-game'
-                            remote('https://bitbucket.org/truedmp/trueid-web-game.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-game')
+                    remote('https://bitbucket.org/truedmp/trueid-web-game.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5021,41 +4673,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-home-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-home-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-home-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-home-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5078,41 +4701,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-horoscope'
-                            remote('https://bitbucket.org/truedmp/trueid-web-horoscope.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-horoscope')
+                    remote('https://bitbucket.org/truedmp/trueid-web-horoscope.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5135,41 +4729,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-music-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-music-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-music-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-music-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5192,41 +4757,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-payment'
-                            remote('https://bitbucket.org/truedmp/trueid-web-payment.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-payment')
+                    remote('https://bitbucket.org/truedmp/trueid-web-payment.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5249,41 +4785,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-payment-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-payment-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-payment-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-payment-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5306,41 +4813,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-trueidtv'
-                            remote('https://bitbucket.org/truedmp/trueid-web-trueidtv.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-trueidtv')
+                    remote('https://bitbucket.org/truedmp/trueid-web-trueidtv.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5363,41 +4841,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-tv-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-tv-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-tv-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-tv-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5420,41 +4869,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-widget'
-                            remote('https://bitbucket.org/truedmp/trueid-web-widget.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-widget')
+                    remote('https://bitbucket.org/truedmp/trueid-web-widget.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5477,41 +4897,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-women-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-women-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-women-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-women-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5534,41 +4925,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'trueid-web-travel-p2'
-                            remote('https://bitbucket.org/truedmp/trueid-web-travel-p2.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('trueid-web-travel-p2')
+                    remote('https://bitbucket.org/truedmp/trueid-web-travel-p2.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5591,41 +4953,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'devops-webapp-demo'
-                            remote('https://bitbucket.org/true_dmp_devops/devops-webapp-demo.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('devops-webapp-demo')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-webapp-demo.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5648,41 +4981,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'devops-integration-legacy'
-                            remote('https://bitbucket.org/true_dmp_devops/devops-integration-legacy.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('devops-integration-legacy')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-integration-legacy.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
@@ -5705,41 +5009,12 @@ jobs:
         {
             branchSources
             {
-                branchSource
+                git
                 {
-                    source
-                    {
-                        git
-                        {
-                            id = 'devops-jenkins-jcasc'
-                            remote('https://bitbucket.org/true_dmp_devops/devops-jenkins-jcasc.git')
-                            credentialsId('DevopsBitBucketID')
-
-                            traits
-                            {
-                                gitTagDiscovery {}
-                                gitBranchDiscovery {}
-
-                                headWildcardFilter
-                                {
-                                    includes('master develop release* feature* tag-*')
-                                    excludes('')
-                                }
-
-                                buildStrategies
-                                {
-                                    buildTags 
-                                    {
-                                        atLeastDays ''
-                                        atMostDays '1'
-                                    }
-
-                                    buildRegularBranches { }
-                                    skipInitialBuildOnFirstBranchIndexing()
-                                }
-                            }
-                        }
-                    }
+                    id('devops-jenkins-jcasc')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-jenkins-jcasc.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
                 }
             }
 
