@@ -2,12 +2,12 @@ jenkins:
   clouds:
     - kubernetes:
         name: "kubernetes"
-        serverUrl: "dummy0-${KB8_URL}"
+        serverUrl: "${KB8_URL}"
         serverCertificate: ""
         skipTlsVerify: true
         credentialsId: "KB8CredentialID"
-        namespace: "dummy1-${KB8_NAMESPACE}"
-        jenkinsUrl: "dummy2-${KB8_JENKINS_URL}"
+        namespace: "${KB8_NAMESPACE}"
+        jenkinsUrl: "${KB8_JENKINS_URL}"
         jenkinsTunnel: ""
         containerCapStr: 42
         maxRequestsPerHostStr: 64
@@ -17,7 +17,7 @@ jenkins:
 
         templates:
           - name: "jenkins-slave"
-            namespace: "dummy3-${KB8_NAMESPACE}"
+            namespace: "${KB8_NAMESPACE}"
             label: "KB8-JNLP"
             nodeUsageMode: EXCLUSIVE
 
