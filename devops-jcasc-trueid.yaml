@@ -1,4 +1,43 @@
 jenkins:
+  clouds:
+    - kubernetes:
+        name: "kubernetes"
+        serverUrl: "${KB8_URL}"
+        serverCertificate: ""
+        skipTlsVerify: true
+        credentialsId: "KB8CredentialID"
+        namespace: "${KB8_NAMESPACE}"
+        jenkinsUrl: "${KB8_JENKINS_URL}"
+        jenkinsTunnel: ""
+        containerCapStr: 42
+        maxRequestsPerHostStr: 64
+        retentionTimeout: 5
+        connectTimeout: 10
+        readTimeout: 20
+
+        templates:
+          - name: "jenkins-slave"
+            namespace: "${KB8_NAMESPACE}"
+            label: "KB8-JNLP"
+            nodeUsageMode: EXCLUSIVE
+            containers:
+              - name: "jnlp"
+                image: "gcr.io/gcp-dmp-devops/cicd/jenkins/jenkins-jnlp-docker:latest"
+                alwaysPullImage: false
+                workingDir: "/home/jenkins/agent"
+                ttyEnabled: true
+                resourceRequestCpu: "500m"
+                resourceLimitCpu: "1000m"
+                resourceRequestMemory: "1Gi"
+                resourceLimitMemory: "2Gi"
+            volumes:
+              - hostPathVolume:
+                mountPath: "/var/run/docker.sock"
+                hostPath: "/var/run/docker.sock"              
+            idleMinutes: "1"
+            activeDeadlineSeconds: "120"
+            slaveConnectTimeout: "1000"
+
   systemMessage: "DEVOPS Jenkins CICD"
   scmCheckoutRetryCount: 2
 
@@ -36,39 +75,7 @@ jenkins:
         - "Job/Read:authenticated"
         - "Agent/Build:anonymous"
 
-  nodes:      
-    - permanent:
-        labelString: "GCP multi-branch-slave-01"
-        mode: NORMAL
-        name: "GCP-SLAVE-01"
-        numExecutors: 7
-        remoteFS: "/home/jenkins"
-        launcher:
-          ssh:
-            host: "${JENKINS_GCP_SLAVE_01_IP}"
-            port: 22
-            credentialsId: 'SSHPrivateKeyID'
-            launchTimeoutSeconds: 60
-            maxNumRetries: 3
-            retryWaitTime: 30
-            sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
-
-    - permanent:
-        labelString: "GCP multi-branch-slave-01"
-        mode: NORMAL
-        name: "GCP-SLAVE-02"
-        numExecutors: 7
-        remoteFS: "/home/jenkins"
-        launcher:
-          ssh:
-            host: "${JENKINS_GCP_SLAVE_02_IP}"
-            port: 22
-            credentialsId: 'SSHPrivateKeyID'
-            launchTimeoutSeconds: 60
-            maxNumRetries: 3
-            retryWaitTime: 30
-            sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
-              
+  nodes:              
     - permanent:
         labelString: "P2 multi-branch-slave-01"
         mode: NORMAL
@@ -107,6 +114,12 @@ credentials:
               id: 'DevopsBitBucketID'
               username: ${BITBUCKET_USER}
               password: ${BITBUCKET_PASSWORD}
+
+          - string:
+              scope: GLOBAL
+              id: "KB8CredentialID"
+              secret: ${KB8_TOKEN}
+              description: "KB8 token to create JNPL pod" 
 
           - string:
               scope: GLOBAL
