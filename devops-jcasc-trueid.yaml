@@ -39,8 +39,8 @@ jenkins:
                 command: ""
                 args: ""
 
-            idleMinutes: "1"
-            activeDeadlineSeconds: "120"
+            idleMinutes: ""
+            activeDeadlineSeconds: ""
             slaveConnectTimeout: "1000"
 
   systemMessage: "DEVOPS Jenkins CICD"
