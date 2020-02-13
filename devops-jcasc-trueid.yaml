@@ -23,8 +23,8 @@ jenkins:
 
             volumes:
               - hostPathVolume:
-                mountPath: "/var/run/docker.sock"
-                hostPath: "/var/run/docker.sock" 
+                  mountPath: "/var/run/docker.sock"
+                  hostPath: "/var/run/docker.sock" 
 
             containers:
               - name: "jnlp"
@@ -36,6 +36,8 @@ jenkins:
                 resourceLimitCpu: "1000m"
                 resourceRequestMemory: "1Gi"
                 resourceLimitMemory: "2Gi"                
+                command: ""
+                args: ""
 
             idleMinutes: "1"
             activeDeadlineSeconds: "120"
@@ -4361,7 +4363,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4418,7 +4420,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4475,7 +4477,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4532,7 +4534,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4589,7 +4591,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4646,7 +4648,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4703,7 +4705,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4760,7 +4762,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4817,7 +4819,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4874,7 +4876,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4931,7 +4933,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -4988,7 +4990,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5045,7 +5047,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5102,7 +5104,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5159,7 +5161,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5216,7 +5218,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5273,7 +5275,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5330,7 +5332,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5387,7 +5389,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5444,7 +5446,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5501,7 +5503,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5558,7 +5560,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5615,7 +5617,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5672,7 +5674,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
@@ -5729,7 +5731,7 @@ jobs:
                                     buildTags 
                                     {
                                         atLeastDays ''
-                                        atMostDays '0'
+                                        atMostDays '1'
                                     }
 
                                     buildRegularBranches { }
