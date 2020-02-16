@@ -1,0 +1,729 @@
+jenkins:
+  clouds:
+    - kubernetes:
+        name: "kubernetes"
+        serverUrl: "${KB8_URL}"
+        serverCertificate: ""
+        skipTlsVerify: true
+        credentialsId: "KB8CredentialID"
+        namespace: "${KB8_NAMESPACE}"
+        jenkinsUrl: "${KB8_JENKINS_URL}"
+        jenkinsTunnel: ""
+        containerCapStr: 42
+        maxRequestsPerHostStr: 64
+        retentionTimeout: 5
+        connectTimeout: 10
+        readTimeout: 20
+
+        templates:
+          - name: "jenkins-slave"
+            namespace: "${KB8_NAMESPACE}"
+            label: "KB8-JNLP"
+            nodeUsageMode: EXCLUSIVE
+
+            volumes:
+              - hostPathVolume:
+                  mountPath: "/var/run/docker.sock"
+                  hostPath: "/var/run/docker.sock" 
+
+            containers:
+              - name: "jnlp"
+                image: "gcr.io/gcp-dmp-devops/cicd/jenkins/jenkins-jnlp-docker:latest"
+                alwaysPullImage: false
+                workingDir: "/home/jenkins/agent"
+                ttyEnabled: true
+                resourceRequestCpu: "500m"
+                resourceLimitCpu: "1000m"
+                resourceRequestMemory: "1Gi"
+                resourceLimitMemory: "2Gi"                
+                command: ""
+                args: ""
+
+            idleMinutes: ""
+            activeDeadlineSeconds: ""
+            slaveConnectTimeout: "1000"
+
+  systemMessage: "DEVOPS Jenkins CICD"
+  scmCheckoutRetryCount: 2
+
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: SYS_CLUSTER_NAME
+            value: ${SYS_CLUSTER_NAME}
+
+          - key: SYS_FROM_JCASC
+            value: 'Y'
+
+          - key: SYS_PACKAGE_VERSION
+            value: ${SYS_PACKAGE_VERSION}
+
+          - key: SYS_JOB_BASE_DIR
+            value: 'CICD-multi-branch'            
+            
+          - key: SYS_JENKINS_ENABLED
+            value: 'Y'
+            #To prevent builds storm we will intially this flag to be 'N'. We will need to manuall change it to 'Y' after Jenkins started. 
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: ${JENKINS_USER}
+          password: ${JENKINS_PASSWORD}
+
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+        - "Overall/Read:authenticated"
+        - "Overall/Administer:authenticated"
+        - "Job/Read:authenticated"
+        - "Agent/Build:anonymous"
+
+unclassified:
+  globalLibraries:
+    libraries:
+      - name: "pipeline-libraries"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://bitbucket.org/truedmp/pipeline-libraries.git"
+                credentialsId: "DevopsBitBucketID"
+
+  location:
+    adminAddress: seubpong.mon@truedigital.com
+    url: ${JENKINS_URL)
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'DevopsBitBucketID'
+              username: ${BITBUCKET_USER}
+              password: ${BITBUCKET_PASSWORD}
+
+          - string:
+              scope: GLOBAL
+              id: "KB8CredentialID"
+              secret: ${KB8_TOKEN}
+              description: "KB8 token to create JNPL pod" 
+
+          - string:
+              scope: GLOBAL
+              id: "LineNotifyToken"
+              secret: ${LINE_NOTIFY_TOKEN}
+              description: "Line notification token" 
+              
+          - file:
+              scope: GLOBAL
+              id: "GCP-SERVICE-ACCOUNT-FOR-CICD"
+              fileName: "gcp-service-account.json"
+              secretBytes: ${GCP_KEY_FILE_BYTES} # GCP_KEY_FILE_BYTES="$(cat mysecretfile.txt | base64)"
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: 'VeracodeID'
+              username: ${VERACODE_USER}
+              password: ${VERACODE_SECRET_KEY}
+
+jobs:
+
+    - script: >
+        folder('CICD-multi-branch')
+    - script: >
+        folder('CICD-multi-branch/deploy')
+    - script: >
+        folder('CICD-multi-branch/build')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Development')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Alpha')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/PreProd')
+    - script: >
+        folder('CICD-multi-branch/deploy/devops/Prod')
+
+    - script: >
+        folder('CICD-multi-branch/build/devops')
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Development/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Development'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Alpha/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Alpha'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/PreProd/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['PreProd'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-webapp-demo')
+        {
+            description 'Deployment job for devops-webapp-demo'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-webapp-demo')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-integration-legacy')
+        {
+            description 'Deployment job for devops-integration-legacy'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-integration-legacy')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        pipelineJob('CICD-multi-branch/deploy/devops/Prod/devops-jenkins-jcasc')
+        {
+            description 'Deployment job for devops-jenkins-jcasc'
+            logRotator 
+            {
+                daysToKeep 10
+            }
+
+            parameters 
+            {
+                stringParam('ImageTag', '')
+                stringParam('Application', 'devops-jenkins-jcasc')
+                stringParam('TriggeredBy', '')
+                choiceParam('Environment', ['Prod'])
+                choiceParam('Action', ['ManualDeploy', 'AutoDeploy', 'Activation', 'Rollback'])
+            }
+
+            definition 
+            {
+                cpsScm 
+                {
+                    scm 
+                    {
+                        git 
+                        {
+                            remote 
+                            {
+                                credentials 'DevopsBitBucketID'
+                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                            }
+
+                            branches 'master'
+                            scriptPath 'deploy/Jenkinsfile'
+                            extensions { }
+                        }
+                    }
+                }
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-webapp-demo')
+        {
+            branchSources
+            {
+                git
+                {
+                    id('devops-webapp-demo')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-webapp-demo.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-integration-legacy')
+        {
+            branchSources
+            {
+                git
+                {
+                    id('devops-integration-legacy')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-integration-legacy.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
+    - script: >
+        multibranchPipelineJob('CICD-multi-branch/build/devops/devops-jenkins-jcasc')
+        {
+            branchSources
+            {
+                git
+                {
+                    id('devops-jenkins-jcasc')
+                    remote('https://bitbucket.org/true_dmp_devops/devops-jenkins-jcasc.git')
+                    credentialsId('DevopsBitBucketID')
+                    includes('develop master release/* feature/*')
+                }
+            }
+
+            factory
+            {
+                workflowBranchProjectFactory
+                {
+                    scriptPath "cicd/Jenkinsfile"
+                }
+            }
+
+            triggers
+            {
+                periodic(1)
+            }
+        }
+
