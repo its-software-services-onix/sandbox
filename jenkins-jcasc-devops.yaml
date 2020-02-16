@@ -62,7 +62,7 @@ jenkins:
             value: 'CICD-multi-branch'            
             
           - key: SYS_JENKINS_ENABLED
-            value: 'Y'
+            value: '${SYS_JENKINS_ENABLED}'
             #To prevent builds storm we will intially this flag to be 'N'. We will need to manuall change it to 'Y' after Jenkins started. 
 
   securityRealm:
