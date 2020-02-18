@@ -38,6 +38,9 @@ jenkins:
                 resourceLimitMemory: "1Gi"                
                 command: ""
                 args: ""
+                privileged: true
+                runAsGroup: 0
+                runAsUser: 0
 
             idleMinutes: ""
             activeDeadlineSeconds: ""
