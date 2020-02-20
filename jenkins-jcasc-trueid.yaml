@@ -208,7 +208,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -249,7 +249,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -290,7 +290,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -331,7 +331,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -372,7 +372,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -413,7 +413,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -454,7 +454,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -495,7 +495,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -536,7 +536,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -577,7 +577,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -618,7 +618,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -659,7 +659,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -700,7 +700,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -741,7 +741,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -782,7 +782,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -823,7 +823,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -864,7 +864,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -905,7 +905,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -946,7 +946,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -987,7 +987,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1028,7 +1028,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1069,7 +1069,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1110,7 +1110,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1151,7 +1151,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1192,7 +1192,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1233,7 +1233,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1274,7 +1274,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1315,7 +1315,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1356,7 +1356,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1397,7 +1397,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1438,7 +1438,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1479,7 +1479,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1520,7 +1520,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1561,7 +1561,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1602,7 +1602,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1643,7 +1643,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1684,7 +1684,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1725,7 +1725,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1766,7 +1766,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1807,7 +1807,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1848,7 +1848,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1889,7 +1889,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1930,7 +1930,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -1971,7 +1971,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2012,7 +2012,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2053,7 +2053,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2094,7 +2094,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2135,7 +2135,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2176,7 +2176,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2217,7 +2217,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2258,7 +2258,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2299,7 +2299,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2340,7 +2340,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2381,7 +2381,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2422,7 +2422,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2463,7 +2463,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2504,7 +2504,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2545,7 +2545,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2586,7 +2586,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2627,7 +2627,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2668,7 +2668,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2709,7 +2709,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2750,7 +2750,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2791,7 +2791,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2832,7 +2832,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2873,7 +2873,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2914,7 +2914,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2955,7 +2955,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -2996,7 +2996,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3037,7 +3037,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3078,7 +3078,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3119,7 +3119,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3160,7 +3160,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3201,7 +3201,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3242,7 +3242,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
@@ -3283,7 +3283,7 @@ jobs:
                             remote 
                             {
                                 credentials 'DevopsBitBucketID'
-                                url 'https://bitbucket.org/true_dmp_devops/devops-jenkins-cd-pipeline.git'
+                                url 'https://bitbucket.org/truedmp/devops-jenkins-cd-pipeline.git'
                             }
 
                             branches 'master'
